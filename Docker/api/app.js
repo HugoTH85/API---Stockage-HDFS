@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 // Configure WebHDFS client
 const hdfs = WebHDFS.createClient({
     user: 'hdfs',
-    host: '0.0.0.0',  // Adresse du NameNode 172.23.0.0/16 et 172.23.0.3 pour le master
+    host: '172.23.0.3',  // Adresse du NameNode 172.23.0.0/16 et 172.23.0.3 pour le master
     port: 9870, // Replace with actual WebHDFS port
     path: '/webhdfs/v1'
 });

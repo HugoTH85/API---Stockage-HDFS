@@ -4,9 +4,8 @@ services:
     container_name: hadoop-master
     hostname: hadoop-master
     networks:
-      - hadoop
-      - API:
-        - ipv4_address: "172.23.0.3"
+      hadoop:
+        ipv4_address: "172.23.0.3"
     ports:
       - "9870:9870"
       - "8088:8088"
@@ -34,27 +33,16 @@ services:
       - "8041:8042"
     command: ["tail", "-f", "/dev/null"]
 
-  # frontend:
-  #   image: 
-  #   container_name: 
-  #   hostname: 
-  #   network:
-  #     - API:
-  #       - ipv4_address: "172.23.0.2"
-  #   ports:
-  #     - 
-  #   command: ["tail", "-f", "/dev/null"]
-  
   api:
     build:
       context: ./api
     container_name: api
     hostname: api
-    network:
-      - API:
-        - ipv4_address: "172.23.0.1"
+    networks:
+      API:
+        ipv4_address: "172.23.0.1"
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       - HDFS_HOST=hadoop-master
       - HDFS_PORT=9870
@@ -63,8 +51,11 @@ services:
 networks:
   hadoop:
     driver: bridge
-  API:
     ipam:
-      driver: default
       config:
         - subnet: 172.23.0.0/16
+  API:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16

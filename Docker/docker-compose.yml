@@ -46,15 +46,19 @@ services:
   #   command: ["tail", "-f", "/dev/null"]
   
   api:
-    image: 
-    container_name: 
-    hostname: 
+    build:
+      context: ./api
+    container_name: api
+    hostname: api
     network:
       - API:
         - ipv4_address: "172.23.0.1"
     ports:
-      - 
-    command: ["tail", "-f", "/dev/null"]
+      - 3000:3000
+    environment:
+      - HDFS_HOST=hadoop-master
+      - HDFS_PORT=9870
+    command: ["node", "app.js"]
 
 networks:
   hadoop:

@@ -4,14 +4,15 @@ services:
     container_name: hadoop-master
     hostname: hadoop-master
     networks:
-      hadoop:
-        ipv4_address: "172.23.0.4"
+      - hadoop
     ports:
       - "9870:9870"
       - "8088:8088"
       - "7077:7077"
       - "16010:16010"
-    command: ["tail", "-f", "/dev/null"]
+    volumes:
+      - ../student.csv:/root/student.csv
+    command: bash -c "service ssh start && /root/start-hadoop.sh && hdfs dfs -mkdir -p /user/root && hdfs dfs -put student.csv && tail -f /dev/null"
 
   hadoop-worker1:
     image: madjidtaoualit/hadoop-cluster:latest
@@ -21,7 +22,7 @@ services:
       - hadoop
     ports:
       - "8040:8042"
-    command: ["tail", "-f", "/dev/null"]
+    command: bash -c "service ssh start && tail -f /dev/null"
 
   hadoop-worker2:
     image: madjidtaoualit/hadoop-cluster:latest
@@ -31,31 +32,21 @@ services:
       - hadoop
     ports:
       - "8041:8042"
-    command: ["tail", "-f", "/dev/null"]
-
-  api:
+    command: bash -c "service ssh start && tail -f /dev/null"
+    
+  spark-api:
     build:
-      context: ./api
-    container_name: api
-    hostname: api
+      context: ./spark-api
+    container_name: spark-api
     networks:
-      API:
-        ipv4_address: "172.24.0.2"  
+     -  hadoop
     ports:
-      - "3000:3000"
+      - "5000:5000"
     environment:
       - HDFS_HOST=hadoop-master
       - HDFS_PORT=9870
-    command: ["node", "app.js"]
+    command: ["python", "app.py"]
 
 networks:
   hadoop:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.23.0.0/16
-  API:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.24.0.0/16

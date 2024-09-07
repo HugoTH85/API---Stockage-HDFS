@@ -1,11 +1,15 @@
 # Projet de Groupe : Big Data avec Hadoop et Spark
 
 **ESIEA 2024**
-Groupe composé de :
+
+##Groupe composé de :
 
 Gabriel **LORGET**
-Hugo **TRICOIRE*
+
+Hugo **TRICOIRE**
+
 Alexis **JORRÉ**
+
 Guillaume **BOULBEN**
 
 ## Contexte

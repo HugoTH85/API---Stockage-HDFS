@@ -146,3 +146,46 @@ Le but du projet est de stocker et traiter un grand volume de données en utilis
 Veuillez déposer vos livrable sur Moodle.
 
 Vous avez jusqu'au ***08/09 avant 23h59*** pour compléter/déposer ce projet. Bonne chance et bon travail en équipe !
+
+# Documentation du Projet de Data
+
+## Membres de l'équipe
+
+- **Gabriel LORGET**
+- **Hugo TRICOIRE**
+- **Alexis JORRÉ**
+- **Guillaume BOULBEN**
+
+## Architecture du Système
+
+Nous avons structuré notre projet de la manière suivante :
+
+- Un **cluster Hadoop** pour le stockage des données via **HDFS**.
+- Une **interface web** développée avec **Quarto**.
+- Une **API** construite avec la bibliothèque **PySpark** de Python pour la gestion des flux de données.
+- Une **orchestration** efficace des flux de données entre l'interface web et le cluster Hadoop via l'API.
+
+Cette organisation a permis de créer un système bien structuré tout en assurant une répartition équitable des responsabilités au sein de l'équipe :
+
+- **Hugo** s’est chargé de la mise en place du cluster Hadoop.
+- **Gabriel** a pris en charge le développement de l'interface web en Quarto.
+- **Alexis** s’est concentré sur la création de l’API, assisté par **Guillaume** pour la gestion des flux de données.
+
+## Méthodologie
+
+Nous avons commencé par travailler séparément sur nos tâches respectives avant de fusionner nos contributions :
+
+1. **Hugo** a d'abord configuré le cluster Hadoop.
+2. **Alexis** et **Guillaume** ont pris en charge la création et la gestion de l'API.
+3. Une fois les tests API/Cluster Hadoop validés, l'interface web, développée par **Gabriel**, a été intégrée pour finaliser le projet.
+
+## Instructions de Lancement du Projet
+
+Des commentaires sont présents tout au long du code pour faciliter la compréhension. Voici les étapes à suivre pour lancer le projet :
+
+1. Utilisez la commande suivante dans le répertoire du projet :
+   ```bash
+   docker-compose up --build
+2. Allez sur internet et taper sur un onglet : 
+   ```bash
+   localhost:3000

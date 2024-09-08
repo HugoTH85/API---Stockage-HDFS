@@ -2,8 +2,6 @@
 
 # Documentation du Projet de Data
 
-# Documentation Technique du Projet de Data
-
 ## Membres de l'équipe
 
 - **Gabriel LORGET** : Développement de l'interface web.

@@ -12,7 +12,7 @@ services:
       - "16010:16010"
     volumes:
       - ../student.csv:/root/student.csv
-    command: bash -c "service ssh start && /root/start-hadoop.sh && hdfs dfs -mkdir -p /user/root && hdfs dfs -put student.csv && tail -f /dev/null"
+    command: bash -c "service ssh start && /root/start-hadoop.sh && hdfs dfs -mkdir -p /user/root && hdfs dfs -put student.csv || true && tail -f /dev/null"
 
   hadoop-worker1:
     image: madjidtaoualit/hadoop-cluster:latest
@@ -39,13 +39,23 @@ services:
       context: ../Back/spark-api
     container_name: spark-api
     networks:
-     -  hadoop
+      -  hadoop
     ports:
       - "5000:5000"
     environment:
       - HDFS_HOST=hadoop-master
       - HDFS_PORT=9870
     command: ["python", "app.py"]
+  front:
+    build:
+      context:
+        ../Front
+    container_name: front
+    networks:
+      - hadoop
+    ports: 
+      - "3000:3000"
+    
 
 networks:
   hadoop:

@@ -1,0 +1,318 @@
+---
+title: Student Alcohol Consumption
+execute: 
+    echo: false
+format: 
+    dashboard:
+        scrolling: true
+        expandable: false
+---
+
+```{=html}
+<style>
+    .button-cell {
+        /* width: 200px; Ajustez selon vos besoins */
+        height: 10%; /* Ajustez selon vos besoins */
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
+
+```
+
+
+```{ojs}
+//| output: false
+
+mutable dataLoaded = false;
+
+// Fonction pour charger les données
+function LoadData() {
+  fetch("http://localhost:5000/read-csv.csv") 
+    .then(response => response.json())
+    .then(d => {
+        // Transforme les chaînes représentant des entiers en véritables entiers
+        const transformToIntegers = (obj) => {
+            Object.keys(obj).forEach(key => {
+                if (typeof obj[key] === 'string' && !isNaN(obj[key]) && obj[key].trim() !== '') {
+                    obj[key] = parseInt(obj[key], 10);
+                }
+            });
+        };
+
+        d.forEach(item => transformToIntegers(item));
+        
+        mutable data = d;
+        mutable dataLoaded = true; // Marque les données comme chargées
+    })
+}
+
+```
+
+
+```{ojs}
+//| output: false
+mutable data = []
+genderCounts = data.reduce((acc, student) => {
+    acc[student.sex] = (acc[student.sex] || 0) + 1;
+    return acc;
+}, {});
+
+// Afficher les résultats
+genderCountsArray = Object.keys(genderCounts).map(gender => {
+    return {
+        gender: gender,
+        count: genderCounts[gender]
+    };
+});
+
+// Calculate age counts
+ageCounts = data.reduce((acc, student) => {
+    acc[student.age] = (acc[student.age] || 0) + 1;
+    return acc;
+}, {});
+
+// Convert to array format
+ageCountsArray = Object.keys(ageCounts).map(age => {
+    return {
+        age: +age, // Convert age to number
+        count: ageCounts[age]
+    };
+});
+
+// Calculer la moyenne des notes en fonction de la consommation quotidienne d'alcool
+dalcGrades = data.reduce((acc, student) => {
+    let dalc = student.Dalc;
+    if (!acc[dalc]) {
+        acc[dalc] = { totalGrades: 0, count: 0 };
+    }
+    acc[dalc].totalGrades += (student.G1 + student.G2 + student.G3) / 3;
+    acc[dalc].count += 1;
+    return acc;
+}, {});
+
+dalcGradesArray = Object.keys(dalcGrades).map(dalc => {
+    return {
+        dalc: +dalc,
+        avg_grade: dalcGrades[dalc].totalGrades / dalcGrades[dalc].count
+    };
+});
+
+// Calculer la moyenne des notes en fonction de la consommation hebdomadaire d'alcool
+walcGrades = data.reduce((acc, student) => {
+    let walc = student.Walc;
+    if (!acc[walc]) {
+        acc[walc] = { totalGrades: 0, count: 0 };
+    }
+    acc[walc].totalGrades += (student.G1 + student.G2 + student.G3) / 3;
+    acc[walc].count += 1;
+    return acc;
+}, {});
+
+walcGradesArray = Object.keys(walcGrades).map(walc => {
+    return {
+        walc: +walc,
+        avg_grade: walcGrades[walc].totalGrades / walcGrades[walc].count
+    };
+});
+
+
+// Calculer la moyenne des absences en fonction de la consommation quotidienne d'alcool
+dalcAbsences = data.reduce((acc, student) => {
+    let dalc = student.Dalc;
+    if (!acc[dalc]) {
+        acc[dalc] = { totalAbsences: 0, count: 0 };
+    }
+    acc[dalc].totalAbsences += student.absences;
+    acc[dalc].count += 1;
+    return acc;
+}, {});
+
+dalcAbsencesArray = Object.keys(dalcAbsences).map(dalc => {
+    return {
+        dalc: +dalc,
+        avg_absences: dalcAbsences[dalc].totalAbsences / dalcAbsences[dalc].count
+    };
+});
+
+// Calculer la répartition du temps d'étude en fonction de la consommation d'alcool hebdomadaire
+walcStudyTime = data.reduce((acc, student) => {
+    let walc = student.Walc;
+    if (!acc[walc]) {
+        acc[walc] = { totalStudyTime: 0, count: 0 };
+    }
+    acc[walc].totalStudyTime += student.studytime;
+    acc[walc].count += 1;
+    return acc;
+}, {});
+
+walcStudyTimeArray = Object.keys(walcStudyTime).map(walc => {
+    return {
+        walc: +walc,
+        avg_studytime: walcStudyTime[walc].totalStudyTime / walcStudyTime[walc].count
+    };
+});
+
+
+// Calculer la moyenne des sorties (goout) en fonction de la consommation d'alcool
+dalcGoOut = data.reduce((acc, student) => {
+    let dalc = student.Dalc;
+    if (!acc[dalc]) {
+        acc[dalc] = { totalGoOut: 0, count: 0 };
+    }
+    acc[dalc].totalGoOut += student.goout;
+    acc[dalc].count += 1;
+    return acc;
+}, {});
+
+dalcGoOutArray = Object.keys(dalcGoOut).map(dalc => {
+    return {
+        dalc: +dalc,
+        avg_goout: dalcGoOut[dalc].totalGoOut / dalcGoOut[dalc].count
+    };
+});
+
+
+
+
+
+```
+
+:::{.button-cell}
+```{ojs}
+viewof button = Inputs.button("Charger le dataset", { 
+    reduce: () => LoadData() ,
+    disabled: dataLoaded
+})
+```
+:::
+
+
+:::{layout-ncol="2"}
+
+
+::: {.card title="Répartition des genres"}
+
+Ce graphique présente la répartition des genres dans les données, avec un léger excédent de femmes (208) par rapport aux hommes (187). Cette information nous aide à mieux comprendre la composition des étudiants en fonction du genre, mais elle n'a pas d'impact direct sur les autres variables.
+
+```{ojs}
+
+
+Plot.plot({
+    height: 500,
+    y: {grid: true},
+    color: {legend: true},
+    marks: [
+        Plot.barY(genderCountsArray, {x: "gender", y: "count"}),
+        Plot.ruleY([0])
+    ]
+})
+```
+:::
+
+::: {.card title="Répartition des âges"}
+
+La majorité des étudiants ont entre 15 et 18 ans, avec une plus grande concentration à 16 ans (104 étudiants). Cette répartition est assez équilibrée, mais montre qu'une grande partie des étudiants sont dans une tranche d'âge similaire, ce qui pourrait limiter la variation des comportements liée à l'âge.
+
+```{ojs}
+Plot.plot({
+    height: 500,
+    y: {grid: true},
+    color: {legend: true},
+    marks: [
+        Plot.barY(ageCountsArray, {x: "age", y: "count"}),
+        Plot.ruleY([0])
+    ]
+})
+```
+:::
+
+:::
+
+
+```{ojs}
+Inputs.table(data)
+```
+
+
+::: {.card title="Moyenne des notes en fonction de la consommation quotidienne d'alcool (Dalc)"}
+
+Dans ce graphique, nous observons que les étudiants qui consomment moins d'alcool quotidiennement (Dalc = 1) ont une moyenne de notes légèrement supérieure (environ 10.9) par rapport aux autres. Cependant, il n'y a pas de différence très marquée entre les groupes, même pour ceux qui consomment plus (Dalc = 5, moyenne autour de 10.6). Cela suggère que la consommation quotidienne d'alcool n'a pas un impact direct significatif sur les notes des étudiants.
+
+```{ojs}
+
+Plot.plot({
+    height: 500,
+    marks: [
+        Plot.barY(dalcGradesArray, {x: "dalc", y: "avg_grade", fill: "lightblue"}),
+        Plot.ruleY([0])
+    ],
+    x: {label: "Consommation quotidienne d'alcool (Dalc)"},
+    y: {label: "Moyenne des notes"}
+})
+
+```
+
+:::
+
+::: {.card title="Moyenne des absences en fonction de la consommation quotidienne d'alcool (Dalc)"}
+
+
+
+Ici, nous remarquons une augmentation claire du nombre moyen d'absences avec une consommation plus élevée d'alcool. Les étudiants qui consomment peu d'alcool quotidiennement (Dalc = 1) ont environ 5 absences en moyenne, alors que ceux qui consomment beaucoup (Dalc = 4) ont en moyenne près de 10 absences. Cela indique que les étudiants qui consomment plus d'alcool ont tendance à être plus souvent absents.
+
+```{ojs}
+
+
+Plot.plot({
+    height: 500,
+    marks: [
+        Plot.line(dalcAbsencesArray, {x: "dalc", y: "avg_absences", stroke: "orange"}),
+        Plot.dot(dalcAbsencesArray, {x: "dalc", y: "avg_absences", fill: "orange"})
+    ],
+    x: {label: "Consommation quotidienne d'alcool (Dalc)"},
+    y: {label: "Moyenne des absences"}
+})
+```
+:::
+
+::: {.card title="Temps moyen d'étude en fonction de la consommation hebdomadaire d'alcool (Walc)"}
+
+
+Ce graphique montre que les étudiants qui consomment moins d'alcool hebdomadairement (Walc = 1) passent plus de temps à étudier (environ 2.28), tandis que ceux qui consomment le plus (Walc = 4 ou 5) étudient moins, avec une moyenne de 1.6 à 1.7. Cela suggère que les étudiants qui consomment beaucoup d'alcool hebdomadairement ont moins de temps ou d'énergie à consacrer à leurs études.
+
+```{ojs}
+
+Plot.plot({
+    height: 500,
+    marks: [
+        Plot.line(walcStudyTimeArray, {x: "walc", y: "avg_studytime", stroke: "purple"}),
+        Plot.dot(walcStudyTimeArray, {x: "walc", y: "avg_studytime", fill: "purple"})
+    ],
+    x: {label: "Consommation hebdomadaire d'alcool (Walc)"},
+    y: {label: "Temps moyen d'étude"}
+})
+
+```
+
+:::
+
+::: {.card title="Moyenne des sorties en fonction de la consommation quotidienne d'alcool (Dalc)"}
+
+Les étudiants qui consomment plus d'alcool quotidiennement (Dalc = 5) sortent en moyenne plus souvent (4.2 sorties en moyenne) par rapport à ceux qui consomment moins (Dalc = 1, avec environ 2.9 sorties). Cela montre que la consommation d'alcool est associée à une fréquence plus élevée de sorties sociales.
+
+```{ojs}
+
+Plot.plot({
+    height: 500,
+    marks: [
+        Plot.line(dalcGoOutArray, {x: "dalc", y: "avg_goout", stroke: "blue"}),
+        Plot.dot(dalcGoOutArray, {x: "dalc", y: "avg_goout", fill: "blue"})
+    ],
+    x: {label: "Consommation quotidienne d'alcool (Dalc)"},
+    y: {label: "Moyenne des sorties (goout)"}
+})
+```
+:::
+

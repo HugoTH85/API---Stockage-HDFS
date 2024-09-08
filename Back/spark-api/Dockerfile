@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     apt-transport-https \
     ca-certificates \
-    openjdk-17-jdk-headless
+    openjdk-17-jdk-headless \
+    procps
 
 # Set JAVA_HOME environment variable
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64

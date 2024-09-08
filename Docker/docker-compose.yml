@@ -36,7 +36,7 @@ services:
     
   spark-api:
     build:
-      context: ./spark-api
+      context: ../Back/spark-api
     container_name: spark-api
     networks:
      -  hadoop

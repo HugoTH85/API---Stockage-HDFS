@@ -1,16 +1,80 @@
 # Projet de Groupe : Big Data avec Hadoop et Spark
 
-**ESIEA 2024**
+# Documentation du Projet de Data
 
-##Groupe composé de :
+# Documentation Technique du Projet de Data
 
-Gabriel **LORGET**
+## Membres de l'équipe
 
-Hugo **TRICOIRE**
+- **Gabriel LORGET** : Développement de l'interface web.
+- **Hugo TRICOIRE** : Configuration et gestion du cluster Hadoop.
+- **Alexis JORRÉ** : Développement de l'API et gestion des flux de données.
+- **Guillaume BOULBEN** : Assistance à la gestion des flux de données et intégration API.
 
-Alexis **JORRÉ**
+## Architecture du Système
 
-Guillaume **BOULBEN**
+### 1. **Cluster Hadoop avec HDFS**
+Le **cluster Hadoop** est utilisé pour le stockage des données à grande échelle via **HDFS** (Hadoop Distributed File System). Ce système distribué permet de gérer des volumes importants de données avec une haute tolérance aux pannes et une distribution efficace des ressources.
+
+- **HDFS** est configuré pour stocker les fichiers dans des blocs répartis sur plusieurs nœuds du cluster.
+- Le **NameNode** gère la structure des fichiers et la répartition des blocs.
+- Les **DataNodes** sont responsables de la gestion des blocs de données.
+
+### 2. **Interface Web avec Quarto**
+L'interface web a été développée avec **Quarto**, un outil open-source utilisé pour générer des interfaces interactives et des dashboards en combinant du contenu Markdown, Python et JavaScript.
+
+- **Quarto** permet la génération de pages web statiques avec des visualisations interactives et des éléments dynamiques.
+- L'interface se connecte à l'API PySpark pour récupérer et afficher les données en provenance du cluster Hadoop.
+
+### 3. **API avec PySpark**
+L'API a été développée avec la bibliothèque **PySpark**, qui permet d'interagir avec Hadoop et HDFS à l'aide de **Spark** pour la gestion et le traitement des données en temps réel.
+
+- **PySpark** gère les transformations et les actions sur les RDD (Resilient Distributed Datasets), permettant de manipuler et traiter les données de manière distribuée.
+- L'API expose des endpoints pour interagir avec les données du cluster, gérer les flux et assurer la communication avec l'interface web.
+- Elle prend en charge des opérations telles que la lecture et l’écriture de données dans HDFS, l'exécution de transformations Spark, et l'agrégation des résultats.
+
+### 4. **Orchestration des Flux de Données**
+L'orchestration des flux de données est assurée via l'API. Cette orchestration permet de gérer le passage des données depuis le cluster Hadoop vers l'interface web, avec les étapes suivantes :
+
+- **Entrée des données** : Les données sont stockées dans HDFS.
+- **Traitement via PySpark** : L'API PySpark extrait et transforme les données selon les requêtes effectuées par l'interface web.
+- **Affichage via Quarto** : Les résultats des transformations sont renvoyés à l'interface web pour être visualisés par l'utilisateur.
+
+## Répartition des Tâches
+
+- **Hugo** a configuré le cluster Hadoop et HDFS, en veillant à optimiser le stockage et la répartition des données.
+- **Gabriel** a développé l'interface web en Quarto, en créant des pages interactives pour la visualisation des données.
+- **Alexis** a développé l'API avec PySpark, en mettant en place les différentes routes et en assurant la communication entre Hadoop et l'interface web.
+- **Guillaume** a travaillé sur la gestion des flux de données et l'intégration des différents composants pour assurer un flux de travail fluide.
+
+## Méthodologie
+
+1. **Mise en place du Cluster Hadoop**  
+   - **Hugo** a démarré la configuration du cluster Hadoop en définissant les nœuds et en optimisant le stockage HDFS.
+   - Le NameNode et les DataNodes ont été configurés pour assurer une haute disponibilité et une répartition des données optimisée.
+
+2. **Développement de l'API PySpark**  
+   - **Alexis** et **Guillaume** ont travaillé sur l'API, en intégrant **PySpark** pour la gestion des flux de données.
+   - Ils ont mis en place des tests pour vérifier la bonne communication entre Hadoop et l'API.
+
+3. **Intégration de l'Interface Web**  
+   - **Gabriel** a intégré l'interface Quarto une fois que les tests API/Cluster étaient validés.
+   - L'interface a été connectée à l'API pour permettre l'affichage des résultats traités en temps réel.
+
+## Instructions de Lancement du Projet
+
+Des commentaires détaillés sont présents dans le code source pour faciliter la compréhension des étapes et de la logique utilisée. Voici les instructions pour lancer le projet :
+
+1. **Installation des prérequis**  
+   Avant de démarrer, assurez-vous d'avoir **Docker** et **Docker Compose** installés sur votre machine.
+
+2. **Lancement du projet avec Docker Compose**  
+   Exécutez la commande suivante depuis le répertoire racine du projet pour lancer tous les services (Hadoop, PySpark, Interface web) :
+   ```bash
+   docker-compose up --build
+3. Allez sur internet et taper sur un onglet : 
+   ```bash
+   localhost:3000
 
 ## Contexte
 
@@ -147,45 +211,3 @@ Veuillez déposer vos livrable sur Moodle.
 
 Vous avez jusqu'au ***08/09 avant 23h59*** pour compléter/déposer ce projet. Bonne chance et bon travail en équipe !
 
-# Documentation du Projet de Data
-
-## Membres de l'équipe
-
-- **Gabriel LORGET**
-- **Hugo TRICOIRE**
-- **Alexis JORRÉ**
-- **Guillaume BOULBEN**
-
-## Architecture du Système
-
-Nous avons structuré notre projet de la manière suivante :
-
-- Un **cluster Hadoop** pour le stockage des données via **HDFS**.
-- Une **interface web** développée avec **Quarto**.
-- Une **API** construite avec la bibliothèque **PySpark** de Python pour la gestion des flux de données.
-- Une **orchestration** efficace des flux de données entre l'interface web et le cluster Hadoop via l'API.
-
-Cette organisation a permis de créer un système bien structuré tout en assurant une répartition équitable des responsabilités au sein de l'équipe :
-
-- **Hugo** s’est chargé de la mise en place du cluster Hadoop.
-- **Gabriel** a pris en charge le développement de l'interface web en Quarto.
-- **Alexis** s’est concentré sur la création de l’API, assisté par **Guillaume** pour la gestion des flux de données.
-
-## Méthodologie
-
-Nous avons commencé par travailler séparément sur nos tâches respectives avant de fusionner nos contributions :
-
-1. **Hugo** a d'abord configuré le cluster Hadoop.
-2. **Alexis** et **Guillaume** ont pris en charge la création et la gestion de l'API.
-3. Une fois les tests API/Cluster Hadoop validés, l'interface web, développée par **Gabriel**, a été intégrée pour finaliser le projet.
-
-## Instructions de Lancement du Projet
-
-Des commentaires sont présents tout au long du code pour faciliter la compréhension. Voici les étapes à suivre pour lancer le projet :
-
-1. Utilisez la commande suivante dans le répertoire du projet :
-   ```bash
-   docker-compose up --build
-2. Allez sur internet et taper sur un onglet : 
-   ```bash
-   localhost:3000

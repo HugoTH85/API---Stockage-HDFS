@@ -73,6 +73,9 @@ Des commentaires détaillés sont présents dans le code source pour faciliter l
 3. Allez sur internet et taper sur un onglet : 
    ```bash
    localhost:3000
+4. Cliquez sur "charger le dataset" et attendez environ :
+   ```bash
+   5 à 10 secondes
 
 ## Contexte
 
